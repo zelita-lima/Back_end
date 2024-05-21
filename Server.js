@@ -48,6 +48,8 @@ app.post('/servidores', (req, res) => {
   res.status(201).json(novoServidor);
 });
 
+// ...
+
 // Rota para atualizar um servidor existente
 app.put('/servidores/:id', (req, res) => {
   const id = parseInt(req.params.id);
@@ -65,8 +67,13 @@ app.put('/servidores/:id', (req, res) => {
 app.delete('/servidores/:id', (req, res) => {
   const id = parseInt(req.params.id);
   console.log(`Recebida requisição DELETE para ID: ${id}`);
-  servidores = servidores.filter(s => s.id !== id);
-  res.status(204).send();
+  const index = servidores.findIndex(s => s.id === id);
+  if (index !== -1) {
+    servidores.splice(index, 1); // Remove o servidor do array
+    res.status(204).send();
+  } else {
+    res.status(404).send('Servidor não encontrado');
+  }
 });
 
 app.listen(port, () => {
