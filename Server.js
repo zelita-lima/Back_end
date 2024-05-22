@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const port = 3000;
 
-// Array de exemplo
+// Array de exemplo//objetos literais
 let servidores = [
   { id: 1, nome: "Ana Maria Silva", cargo: "Professor", departamento: "Educação" },
   { id: 2, nome: "Carlos Eduardo Santos", cargo: "Policial", departamento: "Segurança Pública" },
@@ -10,6 +10,7 @@ let servidores = [
 ];
 
 // Middleware para permitir acesso a partir de qualquer origem (CORS)
+//cabeçalho
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
