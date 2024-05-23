@@ -25,12 +25,12 @@ app.use((req, res, next) => {
 app.use(express.json());
 
 // Rota para obter todos os servidores
-app.get('/servidores', (req, res) => {
+app.get('/servidores/listar', (req, res) => {
   res.json(servidores);
 });
 
 // Rota para obter um servidor por ID
-app.get('/servidores/:id', (req, res) => {
+app.get('/servidores/listar1servidor/:id', (req, res) => {
   const id = parseInt(req.params.id);
   console.log(`Recebida requisição GET para ID: ${id}`);
   const servidor = servidores.find(s => s.id === id);
@@ -42,7 +42,7 @@ app.get('/servidores/:id', (req, res) => {
 });
 
 // Rota para adicionar um novo servidor
-app.post('/servidores', (req, res) => {
+app.post('/servidores/inserir', (req, res) => {
   const novoServidor = req.body;
   novoServidor.id = servidores.length ? servidores[servidores.length - 1].id + 1 : 1;
   servidores.push(novoServidor);
@@ -52,7 +52,7 @@ app.post('/servidores', (req, res) => {
 // ...
 
 // Rota para atualizar um servidor existente
-app.put('/servidores/:id', (req, res) => {
+app.put('/servidores/Atualizar/:id', (req, res) => {
   const id = parseInt(req.params.id);
   console.log(`Recebida requisição PUT para ID: ${id} com dados: `, req.body);
   const index = servidores.findIndex(s => s.id === id);
@@ -65,7 +65,7 @@ app.put('/servidores/:id', (req, res) => {
 });
 
 // Rota para excluir um servidor
-app.delete('/servidores/:id', (req, res) => {
+app.delete('/servidores/deletar/:id', (req, res) => {
   const id = parseInt(req.params.id);
   console.log(`Recebida requisição DELETE para ID: ${id}`);
   const index = servidores.findIndex(s => s.id === id);
