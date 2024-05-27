@@ -1,7 +1,19 @@
 const express = require('express'); // Importa o módulo express
 const basicAuth = require('basic-auth'); // Importa o módulo basic-auth
+const multer = require('multer'); // Importa o módulo multer
 const app = express(); // Cria uma instância do express
 const port = 3000; // Define a porta em que o servidor irá rodar
+
+// Configuração do multer para salvar arquivos no diretório 'uploads'
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Define o diretório onde os arquivos serão salvos
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`); // Define o nome do arquivo
+  }
+});
+const upload = multer({ storage: storage });
 
 // Array de exemplo com alguns servidores
 let servidores = [
@@ -102,8 +114,14 @@ app.delete('/servidores/deletar/:id', authenticate, (req, res) => {
   }
 });
 
-// Inicia o servidor na porta especificada
-
+// Rota para upload de arquivos (protegida por autenticação)
+app.post('/upload', authenticate, upload.single('file'), (req, res) => {
+  if (req.file) {
+    res.status(201).json({ message: 'Arquivo enviado com sucesso', file: req.file });
+  } else {
+    res.status(400).json({ message: 'Nenhum arquivo enviado' });
+  }
+});
 
 // Inicia o servidor na porta especificada
 app.listen(port, () => {
