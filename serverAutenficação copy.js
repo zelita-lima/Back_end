@@ -1,10 +1,19 @@
 const express = require('express'); // Importa o módulo express
-const basicAuth = require('basic-auth'); // Importa o módulo basic-auth
 const multer = require('multer'); // Importa o módulo multer
+const basicAuth = require('basic-auth'); // Importa o módulo basic-auth
+const path = require('path'); // Importa o módulo path
+const fs = require('fs'); // Importa o módulo fs
 const app = express(); // Cria uma instância do express
 const port = 3000; // Define a porta em que o servidor irá rodar
 
-// Configuração do multer para salvar arquivos no diretório 'uploads'
+// Array de exemplo com alguns servidores
+let servidores = [
+  { id: 1, nome: "Ana Maria Silva", cargo: "Professor", departamento: "Educação" },
+  { id: 2, nome: "Carlos Eduardo Santos", cargo: "Policial", departamento: "Segurança Pública" },
+  { id: 3, nome: "Mariana Oliveira", cargo: "Médico", departamento: "Saúde" },
+];
+
+// Configuração do multer para armazenamento de arquivos
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/'); // Define o diretório onde os arquivos serão salvos
@@ -14,13 +23,6 @@ const storage = multer.diskStorage({
   }
 });
 const upload = multer({ storage: storage });
-
-// Array de exemplo com alguns servidores
-let servidores = [
-  { id: 1, nome: "Ana Maria Silva", cargo: "Professor", departamento: "Educação" },
-  { id: 2, nome: "Carlos Eduardo Santos", cargo: "Policial", departamento: "Segurança Pública" },
-  { id: 3, nome: "Mariana Oliveira", cargo: "Médico", departamento: "Saúde" },
-];
 
 // Middleware para permitir acesso a partir de qualquer origem (CORS)
 app.use((req, res, next) => {
@@ -114,13 +116,25 @@ app.delete('/servidores/deletar/:id', authenticate, (req, res) => {
   }
 });
 
-// Rota para upload de arquivos (protegida por autenticação)
+// Rota para upload de arquivo (protegida por autenticação)
 app.post('/upload', authenticate, upload.single('file'), (req, res) => {
-  if (req.file) {
-    res.status(201).json({ message: 'Arquivo enviado com sucesso', file: req.file });
-  } else {
-    res.status(400).json({ message: 'Nenhum arquivo enviado' });
+  if (!req.file) {
+    return res.status(400).json({ message: 'Nenhum arquivo enviado' });
   }
+  res.status(200).json({ message: 'Arquivo enviado com sucesso', file: req.file });
+});
+
+// Rota para download de arquivo (protegida por autenticação)
+app.get('/download/:filename', authenticate, (req, res) => {
+  const filename = req.params.filename;
+  const filepath = path.join(__dirname, 'uploads', filename);
+
+  fs.access(filepath, fs.constants.F_OK, (err) => {
+    if (err) {
+      return res.status(404).json({ message: 'Arquivo não encontrado' });
+    }
+    res.sendFile(filepath);
+  });
 });
 
 // Inicia o servidor na porta especificada
