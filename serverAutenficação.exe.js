@@ -81,7 +81,7 @@ app.post('/Frutas/Inserir', authenticate, (req, res) => {
 app.put('/Frutas/Atualizar/:id', authenticate, (req, res) => {
   const id = parseInt(req.params.id); // Converte o parâmetro ID para um número inteiro
   console.log(`Recebida requisição PUT para ID: ${id} com dados: `, req.body); // Loga o ID e os dados recebidos
-  const index = servidores.findIndex(s => s.id === id); // Encontra o índice do servidor com o ID especificado
+  const index = Frutas.findIndex(s => s.id === id); // Encontra o índice do servidor com o ID especificado
   if (index !== -1) {
     Frutas[index] = { ...Frutas[index], ...req.body }; // Atualiza o servidor com os novos dados
     res.json(Frutas[index]); // Responde com o servidor atualizado
